@@ -1,0 +1,6 @@
+# Tested with Python 3.13 and Pinocchio 3.9.0. Install the package named pin.
+-r requirements.txt
+pin==3.9.0
+# Keep the binary URDF parser ABI compatible with the Pinocchio wheel.
+cmeel-urdfdom>=4,<5
+cmeel-tinyxml2>=10,<11
