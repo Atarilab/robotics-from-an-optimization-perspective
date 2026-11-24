@@ -31,23 +31,23 @@ Appendices on Lie theory, optimization, and holonomic/nonholonomic constraints w
 
 - **L3:** [Screw-motion notebook](chapters/03-rigid-body-motion/01_screw_motion.ipynb) · [Open the GUI](https://htmlpreview.github.io/?https://github.com/Atarilab/robotics-from-an-optimization-perspective/blob/main/chapters/03-rigid-body-motion/screw_motion.html).
 - **L4:** [Forward kinematics](chapters/04-forward-kinematics/01_planar_arm_and_pinocchio.ipynb) → [Jacobians and accelerations](chapters/05-velocity-kinematics/01_jacobians_and_accelerations.ipynb) → [Inverse kinematics](chapters/06-inverse-kinematics/01_inverse_kinematics.ipynb).
-- **L4 slide 24 and slides 26–28:** [Retrieve analytic Jacobians and frame accelerations with Pinocchio](chapters/05-velocity-kinematics/02_pinocchio_analytic_jacobians_and_accelerations.ipynb), with spatial-arm and one-link worked examples.
+- **L4 slide 24 and slides 26–27:** [Retrieve analytic Jacobians and frame accelerations with Pinocchio](chapters/05-velocity-kinematics/02_pinocchio_analytic_jacobians_and_accelerations.ipynb), with spatial-arm and one-link worked examples.
 
-- **L4 slides 31 and 34:** [Interactive velocity and force ellipses](chapters/05-velocity-kinematics/03_interactive_manipulability.ipynb), with joint-angle sliders and singularity examples.
+- **L4 slides 30 and 33:** [Interactive velocity and force ellipses](chapters/05-velocity-kinematics/03_interactive_manipulability.ipynb), with joint-angle sliders and singularity examples. [Open the browser GUI](https://htmlpreview.github.io/?https://github.com/Atarilab/robotics-from-an-optimization-perspective/blob/main/chapters/05-velocity-kinematics/manipulability.html) without installing Python.
 
 ### L4 slide-to-notebook map
 
-Numbering follows the 48-slide deck revised on 24 November 2026. Titles identify the topic if the slides are reordered later.
+Numbering follows the 47-slide deck revised on 24 November 2026. Titles identify the topic if the slides are reordered later.
 
 | Slide(s) | Topic | Notebook |
 | --- | --- | --- |
 | 12 | Robot descriptions: DH, PoE, and URDF | [Planar arm and Pinocchio](chapters/04-forward-kinematics/01_planar_arm_and_pinocchio.ipynb) |
 | 24 | Analytic Jacobians | [Pinocchio analytic Jacobians and accelerations](chapters/05-velocity-kinematics/02_pinocchio_analytic_jacobians_and_accelerations.ipynb#analytic-jacobians) |
-| 26–27 | Spatial and classical acceleration | [Pinocchio acceleration examples](chapters/05-velocity-kinematics/02_pinocchio_analytic_jacobians_and_accelerations.ipynb#accelerations) |
-| 28 | Constant joint speed and centripetal acceleration | [Jacobians and accelerations](chapters/05-velocity-kinematics/01_jacobians_and_accelerations.ipynb) |
-| 31 | Velocity manipulability ellipse | [Interactive velocity and force ellipses](chapters/05-velocity-kinematics/03_interactive_manipulability.ipynb) |
-| 34 | Force ellipsoids and reaction directions | [The same interactive notebook](chapters/05-velocity-kinematics/03_interactive_manipulability.ipynb) |
-| 40, 42 | Numerical IK step and finite log-error Jacobian | [Inverse kinematics](chapters/06-inverse-kinematics/01_inverse_kinematics.ipynb) |
+| 26 | Spatial acceleration | [Pinocchio acceleration examples](chapters/05-velocity-kinematics/02_pinocchio_analytic_jacobians_and_accelerations.ipynb#accelerations) |
+| 27 | Constant joint speed and centripetal acceleration | [Jacobians and accelerations](chapters/05-velocity-kinematics/01_jacobians_and_accelerations.ipynb) |
+| 30 | Velocity manipulability ellipse | [Interactive velocity and force ellipses](chapters/05-velocity-kinematics/03_interactive_manipulability.ipynb) |
+| 33 | Force ellipsoids and reaction directions | [Browser GUI](https://htmlpreview.github.io/?https://github.com/Atarilab/robotics-from-an-optimization-perspective/blob/main/chapters/05-velocity-kinematics/manipulability.html) · [Notebook](chapters/05-velocity-kinematics/03_interactive_manipulability.ipynb) |
+| 39, 41 | Numerical IK step and finite log-error Jacobian | [Inverse kinematics](chapters/06-inverse-kinematics/01_inverse_kinematics.ipynb) |
 
 ## Run the notebooks
 
@@ -82,6 +82,7 @@ chapters/
     01_jacobians_and_accelerations.ipynb
     02_pinocchio_analytic_jacobians_and_accelerations.ipynb
     03_interactive_manipulability.ipynb
+    manipulability.html
   06-inverse-kinematics/
     README.md
     01_inverse_kinematics.ipynb
