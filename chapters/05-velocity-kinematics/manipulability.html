@@ -73,7 +73,7 @@ const mul=(v,s)=>v.map(x=>x*s),add=(v,w)=>v.map((x,i)=>x+w[i]);
 function draw(s){
  const r=plot('robot',2.3,'World x (m)','World y (m)');
  r.line(s.points.slice(0,2),C.blue,10);r.line(s.points.slice(1),C.orange,10);s.points.forEach((p,i)=>r.dot(p,i===2?C.green:C.ink,9));
- r.label(s.points[0],'base',12,20);r.label(s.points[2],'tool');r.finish();
+ r.label(s.points[0],'base',12,20);r.label(s.points[2],'tool',s.points[2][0]>1.6?-52:14,s.points[2][1]>1.8?28:-16);r.finish();
  const v=plot('velocity',2.5,'Tool vₓ (m/s)','Tool vᵧ (m/s)');
  const pts=Array.from({length:721},(_,i)=>{let a=i*Math.PI/360;return s.J.map(row=>row[0]*Math.cos(a)+row[1]*Math.sin(a));});
  v.polygon(pts,'#0065bd20');v.line(pts,C.blue,4);
