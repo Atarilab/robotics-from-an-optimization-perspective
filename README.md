@@ -12,7 +12,7 @@ One folder per **book chapter**. Lecture L4 combines Chapters 4–6; lecture and
 | 2 | Configuration Space | — | Planned |
 | 3 | [Rigid-Body Motion](chapters/03-rigid-body-motion/) | L3 | [Notebook](chapters/03-rigid-body-motion/01_screw_motion.ipynb) |
 | 4 | [Forward Kinematics](chapters/04-forward-kinematics/) | L4 | [Notebook](chapters/04-forward-kinematics/01_planar_arm_and_pinocchio.ipynb) |
-| 5 | [Velocity Kinematics](chapters/05-velocity-kinematics/) | L4 | [Jacobians and accelerations](chapters/05-velocity-kinematics/01_jacobians_and_accelerations.ipynb) · [Pinocchio analytic Jacobians and accelerations](chapters/05-velocity-kinematics/02_pinocchio_analytic_jacobians_and_accelerations.ipynb) |
+| 5 | [Velocity Kinematics](chapters/05-velocity-kinematics/) | L4 | [Jacobians and accelerations](chapters/05-velocity-kinematics/01_jacobians_and_accelerations.ipynb) · [Pinocchio analytic Jacobians and accelerations](chapters/05-velocity-kinematics/02_pinocchio_analytic_jacobians_and_accelerations.ipynb) · [Interactive manipulability](chapters/05-velocity-kinematics/03_interactive_manipulability.ipynb) |
 | 6 | [Inverse Kinematics](chapters/06-inverse-kinematics/) | L4 | [Notebook](chapters/06-inverse-kinematics/01_inverse_kinematics.ipynb) |
 | 7 | Robot Dynamics | — | Planned |
 | 8 | Motion Planning | — | Planned |
@@ -32,6 +32,8 @@ Appendices on Lie theory, optimization, and holonomic/nonholonomic constraints w
 - **L3:** [Screw-motion notebook](chapters/03-rigid-body-motion/01_screw_motion.ipynb) · [Open the GUI](https://htmlpreview.github.io/?https://github.com/Atarilab/robotics-from-an-optimization-perspective/blob/main/chapters/03-rigid-body-motion/screw_motion.html).
 - **L4:** [Forward kinematics](chapters/04-forward-kinematics/01_planar_arm_and_pinocchio.ipynb) → [Jacobians and accelerations](chapters/05-velocity-kinematics/01_jacobians_and_accelerations.ipynb) → [Inverse kinematics](chapters/06-inverse-kinematics/01_inverse_kinematics.ipynb).
 - **L4 slides 24–26:** [Retrieve analytic Jacobians and frame accelerations with Pinocchio](chapters/05-velocity-kinematics/02_pinocchio_analytic_jacobians_and_accelerations.ipynb), with spatial-arm and one-link worked examples.
+
+- **L4 slides 30 and 34:** [Interactive velocity and force ellipses](chapters/05-velocity-kinematics/03_interactive_manipulability.ipynb), with joint-angle sliders and singularity examples.
 
 ## Run the notebooks
 
@@ -65,6 +67,7 @@ chapters/
     README.md
     01_jacobians_and_accelerations.ipynb
     02_pinocchio_analytic_jacobians_and_accelerations.ipynb
+    03_interactive_manipulability.ipynb
   06-inverse-kinematics/
     README.md
     01_inverse_kinematics.ipynb
