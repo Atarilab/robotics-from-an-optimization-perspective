@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Velocity and force ellipses · Robotics from an Optimization Perspective</title>
+<style>
+:root{--blue:#0065bd;--orange:#c76a12;--green:#16806d;--ink:#152c3e;--muted:#526879;--line:#d9e3eb}
+*{box-sizing:border-box}body{margin:0;background:#f5f8fb;color:var(--ink);font:16px/1.5 system-ui,-apple-system,sans-serif}main{max-width:1400px;margin:auto;padding:26px 30px}header{border-bottom:2px solid var(--blue);padding-bottom:18px}.eyebrow{color:var(--blue);font-size:12px;letter-spacing:.1em;font-weight:700;text-transform:uppercase}h1{font-size:30px;margin:6px 0}h2{font-size:18px;margin:0 0 4px}p{margin:5px 0;color:var(--muted)}a{color:var(--blue)}.topline{display:flex;justify-content:space-between;gap:20px;align-items:center}.controls{display:grid;grid-template-columns:1fr 1fr;gap:25px;margin:22px 0 12px}.control-head{display:flex;justify-content:space-between;align-items:center}label{font-weight:650}input[type=range]{width:100%;accent-color:var(--blue);margin:12px 0}input[type=number]{width:82px;padding:5px 8px;border:1px solid #a9bbc8;border-radius:4px;font:inherit}button,select{font:inherit;color:var(--ink);border:1px solid #b7c8d5;border-radius:5px;background:white;padding:7px 13px;cursor:pointer}button:hover{border-color:var(--blue);background:#eaf3fb}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #75b6ee;outline-offset:3px}.presets{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.status{margin-left:auto;font-weight:700;color:var(--green)}.plots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:22px}.plot{background:#fff;padding:16px 12px 12px;border:1px solid var(--line);border-radius:8px;min-width:0}.plot p{font-size:13px;min-height:39px}canvas{width:100%;aspect-ratio:1;display:block}.caption{font-size:12px!important;min-height:38px!important;margin:8px 3px 0}.summary{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:25px;margin:22px 0}.matrix{white-space:pre;font:16px/1.6 ui-monospace,SFMono-Regular,monospace;margin-top:8px}.summary h2{font-size:16px}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:right;padding:5px 8px;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}.legend{font-size:13px;color:var(--muted);margin-top:12px}.legend span{display:inline-block;margin-right:18px}.dot{display:inline-block;width:20px;border-top:2px dashed;margin-right:6px;vertical-align:middle}.note{border-top:1px solid var(--line);padding-top:15px;font-size:14px}details{margin-top:20px}summary{cursor:pointer;font-weight:650}footer{font-size:13px;color:var(--muted);margin-top:25px}#force-window{font-size:12px;padding:3px 6px}.force-head{display:flex;justify-content:space-between;gap:5px;align-items:start}@media(max-width:950px){main{padding:20px}.plots{gap:10px}.plot{padding:10px 5px}.summary{gap:12px}.topline{align-items:start}}@media(max-width:720px){.plots,.summary{grid-template-columns:1fr}.controls{gap:15px}.topline{display:block}h1{font-size:25px}.status{margin-left:0;width:100%}.plot{padding:16px}canvas{max-height:420px}.matrix{font-size:15px}}
+</style>
+</head>
+<body><main>
+<header><div class="eyebrow">ATARI Lab · Chapter 5 · Velocity kinematics</div><div class="topline"><h1>Velocity and force ellipses</h1><a href="https://github.com/Atarilab/robotics-from-an-optimization-perspective/blob/main/chapters/05-velocity-kinematics/03_interactive_manipulability.ipynb">Open the notebook ↗</a></div><p>Change the two joint angles. See how the same Jacobian shapes tool velocities and forces.</p></header>
+<section aria-label="Joint controls">
+<div class="controls">
+<div><div class="control-head"><label for="q1">Base joint q₁</label><span><input type="number" id="q1-number" aria-label="Base joint angle in degrees" min="-180" max="180" step="1" value="25"> °</span></div><input id="q1" aria-label="Base joint q1" type="range" min="-180" max="180" value="25" step="1"></div>
+<div><div class="control-head"><label for="q2">Elbow joint q₂</label><span><input type="number" id="q2-number" aria-label="Elbow joint angle in degrees" min="-180" max="180" step="1" value="70"> °</span></div><input id="q2" aria-label="Elbow joint q2" type="range" min="-180" max="180" value="70" step="1"></div>
+</div><div class="presets"><span>Try a posture:</span><button type="button" data-preset="25,70">Regular</button><button type="button" data-preset="0,0">Straight</button><button type="button" data-preset="0,180">Folded</button><button type="button" data-preset="25,5">Near singularity</button><span class="status" id="rank" role="status"></span></div>
+</section>
+<section class="plots" aria-label="Robot and capability plots">
+<article class="plot"><h2>Planar 2R arm</h2><p>Both links are 1 m. Tool position is measured in fixed world axes.</p><canvas id="robot" width="720" height="720" role="img" aria-label="Robot configuration in world x and y coordinates"></canvas><p class="caption">Right-handed axes: x right, y up, z out of the page. Positive joint angles are counterclockwise.</p></article>
+<article class="plot"><h2>Velocity set</h2><p>u = Jₚ q̇ &nbsp; with ‖q̇‖₂ ≤ 1 rad/s</p><canvas id="velocity" width="720" height="720" role="img" aria-label="Tool velocity ellipse in metres per second"></canvas><p class="caption" id="velocity-note"></p></article>
+<article class="plot"><div class="force-head"><h2>Force set</h2><select id="force-window" aria-label="Force plot range"><option value="3.2">View ±3.2 N</option><option value="10">View ±10 N</option></select></div><p>τ = Jₚᵀ F &nbsp; with ‖τ‖₂ ≤ 1 N m</p><canvas id="force" width="720" height="720" role="img" aria-label="Admissible force ellipse or singular strip in newtons"></canvas><p class="caption" id="force-note"></p></article>
+</section>
+<div class="legend"><span><i class="dot" style="color:var(--green)"></i>Principal direction u₁</span><span><i class="dot" style="color:var(--orange)"></i>Principal direction u₂</span>Each plot uses its own physical units. Axis scales stay fixed as the joints move.</div>
+<section class="summary" aria-label="Computed quantities">
+<div><h2>Position Jacobian Jₚ</h2><div id="jacobian" class="matrix"></div></div>
+<div><h2>A = Jₚ Jₚᵀ</h2><div id="gram" class="matrix"></div></div>
+<div><h2>Principal values</h2><table><thead><tr><th>Direction</th><th>λᵢ</th><th>σᵢ = √λᵢ</th><th>1/σᵢ</th></tr></thead><tbody id="values"></tbody></table></div>
+</section>
+<p class="note" id="insight"></p>
+<details><summary>What am I looking at?</summary><p>Jₚ maps joint rates to the velocity of the tool origin in the world x-y plane. The eigenvectors of JₚJₚᵀ give the shared principal directions. Velocity semiaxes have lengths σᵢ; force semiaxes have lengths 1/σᵢ when Jₚ has full rank.</p><p>Rotate q₁ while holding q₂ fixed: the directions rotate, but the semiaxis lengths do not change. Move q₂ to 0° or ±180°: the velocity ellipse collapses to a segment, while the ideal force set becomes a strip.</p><p>The bounds are Euclidean balls, not independent joint limits. Forces obey FᵀJₚJₚᵀF ≤ 1. At a singularity this inequality leaves a reaction direction unbounded; it does not describe unlimited strength or active force control. Gravity, inertia, contact, and structural limits are outside this example.</p></details>
+<footer>Robotics from an Optimization Perspective · Majid Khadiv · ATARI Lab, Technical University of Munich<br>Runs entirely in your browser. Save this HTML file to use it offline; no Python installation is needed.</footer>
+<noscript>This GUI requires JavaScript. Open the companion notebook for the equations and saved plots.</noscript>
+</main>
+<script>
+'use strict';
+// Unit-link planar 2R position task, identical to the companion notebook.
+function ellipseState(q1deg,q2deg){
+ const q1=q1deg*Math.PI/180,q2=q2deg*Math.PI/180;
+ const e=[Math.cos(q1),Math.sin(q1)],p=[e[0]+Math.cos(q1+q2),e[1]+Math.sin(q1+q2)];
+ const J=[[-p[1],-Math.sin(q1+q2)],[p[0],Math.cos(q1+q2)]];
+ const a=J[0][0]**2+J[0][1]**2,b=J[0][0]*J[1][0]+J[0][1]*J[1][1],d=J[1][0]**2+J[1][1]**2;
+ const l1=(a+d+Math.hypot(a-d,2*b))/2;
+ // det(J)^2 / lambda_max avoids cancellation near singularity.
+ const det=J[0][0]*J[1][1]-J[0][1]*J[1][0],l2=det*det/l1;
+ const sigma=[Math.sqrt(l1),Math.sqrt(l2)],phi=.5*Math.atan2(2*b,a-d);
+ const U=[[Math.cos(phi),Math.sin(phi)],[-Math.sin(phi),Math.cos(phi)]]; // columns stored as vectors
+ const rank=sigma[1]>1e-10?2:1;
+ return {points:[[0,0],e,p],J,A:[[a,b],[b,d]],lambda:[l1,l2],sigma,U,rank};
+}
+const C={blue:'#0065bd',orange:'#c76a12',green:'#16806d',ink:'#152c3e',grid:'#e7edf2'};
+const $=id=>document.getElementById(id);
+function plot(id,extent,xlabel,ylabel){
+ const canvas=$(id),ctx=canvas.getContext('2d'),W=720,H=720,L=84,R=26,T=35,B=70,size=Math.min(W-L-R,H-T-B),scale=size/(2*extent);
+ ctx.clearRect(0,0,W,H);const X=x=>L+size/2+x*scale,Y=y=>T+size/2-y*scale;
+ ctx.font='22px system-ui';ctx.lineWidth=1;ctx.textAlign='center';ctx.textBaseline='middle';
+ const step=extent>4?5:1;
+ for(let k=Math.ceil(-extent/step)*step;k<=extent;k+=step){
+  ctx.strokeStyle=C.grid;ctx.beginPath();ctx.moveTo(X(k),Y(-extent));ctx.lineTo(X(k),Y(extent));ctx.moveTo(X(-extent),Y(k));ctx.lineTo(X(extent),Y(k));ctx.stroke();
+  ctx.fillStyle='#637888';ctx.fillText(String(k),X(k),Y(-extent)+24);ctx.textAlign='right';ctx.fillText(String(k),X(-extent)-12,Y(k));ctx.textAlign='center';
+ }
+ ctx.strokeStyle='#9aafbd';ctx.beginPath();ctx.moveTo(X(-extent),Y(0));ctx.lineTo(X(extent),Y(0));ctx.moveTo(X(0),Y(-extent));ctx.lineTo(X(0),Y(extent));ctx.stroke();
+ ctx.fillStyle=C.ink;ctx.fillText(xlabel,L+size/2,H-18);ctx.save();ctx.translate(22,T+size/2);ctx.rotate(-Math.PI/2);ctx.fillText(ylabel,0,0);ctx.restore();
+ function line(points,color,width=3,dash=[]){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(X(p[0]),Y(p[1])):ctx.moveTo(X(p[0]),Y(p[1])));ctx.strokeStyle=color;ctx.lineWidth=width;ctx.setLineDash(dash);ctx.stroke();ctx.setLineDash([]);}
+ function polygon(points,color){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(X(p[0]),Y(p[1])):ctx.moveTo(X(p[0]),Y(p[1])));ctx.closePath();ctx.fillStyle=color;ctx.fill();}
+ function dot(p,color,r=8){ctx.beginPath();ctx.arc(X(p[0]),Y(p[1]),r,0,2*Math.PI);ctx.fillStyle=color;ctx.fill();}
+ function label(p,t,dx=14,dy=-16){ctx.fillStyle=C.ink;ctx.textAlign='left';ctx.fillText(t,X(p[0])+dx,Y(p[1])+dy);}
+ function arrow(p0,p1,color){line([p0,p1],color,3);let dx=X(p1[0])-X(p0[0]),dy=Y(p1[1])-Y(p0[1]),a=Math.atan2(dy,dx);ctx.beginPath();ctx.moveTo(X(p1[0]),Y(p1[1]));ctx.lineTo(X(p1[0])-13*Math.cos(a-.4),Y(p1[1])-13*Math.sin(a-.4));ctx.lineTo(X(p1[0])-13*Math.cos(a+.4),Y(p1[1])-13*Math.sin(a+.4));ctx.closePath();ctx.fillStyle=color;ctx.fill();}
+ ctx.save();ctx.beginPath();ctx.rect(L,T,size,size);ctx.clip();
+ return {ctx,X,Y,scale,line,polygon,dot,label,arrow,finish:()=>ctx.restore()};
+}
+const mul=(v,s)=>v.map(x=>x*s),add=(v,w)=>v.map((x,i)=>x+w[i]);
+function draw(s){
+ const r=plot('robot',2.3,'World x (m)','World y (m)');
+ r.line(s.points.slice(0,2),C.blue,10);r.line(s.points.slice(1),C.orange,10);s.points.forEach((p,i)=>r.dot(p,i===2?C.green:C.ink,9));
+ r.label(s.points[0],'base',12,20);r.label(s.points[2],'tool');r.finish();
+ const v=plot('velocity',2.5,'Tool vₓ (m/s)','Tool vᵧ (m/s)');
+ const pts=Array.from({length:721},(_,i)=>{let a=i*Math.PI/360;return s.J.map(row=>row[0]*Math.cos(a)+row[1]*Math.sin(a));});
+ v.polygon(pts,'#0065bd20');v.line(pts,C.blue,4);
+ s.U.forEach((u,i)=>v.line([mul(u,-s.sigma[i]),mul(u,s.sigma[i])],i?C.orange:C.green,3,[9,6]));v.finish();
+ const extent=Number($('force-window').value),f=plot('force',extent,'Force Fₓ (N)','Force Fᵧ (N)');
+ if(s.rank===2){
+  f.ctx.beginPath();f.ctx.ellipse(f.X(0),f.Y(0),f.scale/s.sigma[0],f.scale/s.sigma[1],-Math.atan2(s.U[0][1],s.U[0][0]),0,Math.PI*2);f.ctx.fillStyle='#c76a1225';f.ctx.fill();f.ctx.strokeStyle=C.orange;f.ctx.lineWidth=4;f.ctx.stroke();
+ }else{
+  const a=mul(s.U[0],1/s.sigma[0]),b=mul(s.U[1],extent*4),strip=[add(a,b),add(mul(a,-1),b),add(mul(a,-1),mul(b,-1)),add(a,mul(b,-1))];
+  f.polygon(strip,'#c76a1225');[1,-1].forEach(sign=>f.line([add(mul(a,sign),b),add(mul(a,sign),mul(b,-1))],C.orange,4));
+ }
+ s.U.forEach((u,i)=>{let len=(i===1&&s.rank===1)?extent*.8:Math.min(1/s.sigma[i],extent*.85),a=mul(u,len),b=mul(a,-1);f.line([a,b],i?C.orange:C.green,3,[9,6]);if(i===1&&s.rank===1){f.arrow([0,0],a,C.orange);f.arrow([0,0],b,C.orange);}});f.finish();
+}
+function fmt(x){return Math.abs(x)<.0005?'0.000':x.toFixed(3);}
+function matrix(A){return A.map((row,i)=>(i?'⎣ ':'⎡ ')+row.map(x=>fmt(x).padStart(7)).join('  ')+(i?' ⎦':' ⎤')).join('\n');}
+function redraw(){
+ const s=ellipseState(Number($('q1').value),Number($('q2').value));draw(s);
+ $('rank').textContent=s.rank===2?'Rank 2 · two velocity directions':'Rank 1 · singular configuration';
+ $('jacobian').textContent=matrix(s.J);$('gram').textContent=matrix(s.A);
+ $('values').innerHTML=s.sigma.map((sig,i)=>`<tr><td>u${i+1}</td><td>${fmt(s.lambda[i])}</td><td>${fmt(sig)}</td><td>${s.rank===1&&i===1?'∞':fmt(1/sig)}</td></tr>`).join('');
+ $('velocity-note').textContent=s.rank===2?'Velocity semiaxes: σ₁ and σ₂. Dashed lines show the principal directions.':'The ellipse collapses to a line segment. No instantaneous velocity exists along u₂.';
+ $('force-note').textContent=s.rank===2?'Force semiaxes: 1/σ₁ and 1/σ₂. The ellipse can extend beyond this fixed view.':'The force set is a strip, unbounded along u₂. Its edges continue beyond this view.';
+ $('insight').textContent=s.rank===2?'Try rotating q₁: only the directions change. Then straighten the elbow: one velocity axis shrinks while its force counterpart grows.':'At this singular posture, one velocity direction is lost. The ideal static force bound leaves that same direction unbounded.';
+}
+for(const id of ['q1','q2']){
+ $(id).addEventListener('input',()=>{$(id+'-number').value=$(id).value;redraw();});
+ $(id+'-number').addEventListener('input',()=>{if($(id+'-number').value==='')return;let val=Number($(id+'-number').value);if(!Number.isFinite(val))return;val=Math.max(-180,Math.min(180,Math.round(val)));$(id).value=val;redraw();});
+ $(id+'-number').addEventListener('change',()=>{$(id+'-number').value=$(id).value;});
+}
+document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{const q=b.dataset.preset.split(',');['q1','q2'].forEach((id,i)=>{$(id).value=q[i];$(id+'-number').value=q[i];});redraw();}));
+$('force-window').addEventListener('change',redraw);redraw();
+</script></body></html>
